@@ -8,12 +8,6 @@ import joblib
 
 app = Flask(__name__)
 
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    result = None
-    if request.method == 'POST':
-        url_input = request.form['url_input']
 def resolve_short_url(short_url):
     if not isinstance(short_url, str):
         return short_url
@@ -158,9 +152,14 @@ def make_prediction(url_input):
     loaded_model = joblib.load('random_forest_model.joblib')
     predictions = loaded_model.predict(prediction_data)
 
-    #return predictions[0]
+    return predictions[0]
 
-    result = make_prediction(url_input)
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    result = None
+    if request.method == 'POST':
+        url_input = request.form['url_input']
+        result = make_prediction(url_input)
     return render_template('index.html', result=result)
 
 if __name__ == '__main__':
